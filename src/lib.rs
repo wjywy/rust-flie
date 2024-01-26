@@ -1,59 +1,11 @@
-#[cfg(test)]
-mod tests {
-    use std::vec;
+use wasm_bindgen::prelude::*;
 
-    use super::*;
-
-    #[test]
-    fn one_result() {
-        let query = "duct";
-        let contents = "\
-        Rust;
-        safe,fast,productive.
-        Pick three.";
-
-        assert_eq!(vec!["safe, fast, productive"], search(query, contents));
-    }
-}
-
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line);
+// 斐波那契数列，时间复杂度 O(2^n)
+#[wasm_bindgen]
+pub fn fib(n: i32) -> i32 {
+    match n {
+        1 => 1,
+        2 => 1,
+        _ => fib(n - 1) + fib(n - 2),
         }
-    }
-
-    results
-}
-
-
-use std::error::Error;
-use std::fs;
-pub struct Config {
-    pub query: String,
-    pub file_path: String,
-}
-
-impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough argument")
-        }
-        let query = args[1].clone();
-        let file_path = args[2].clone();
-
-        Ok( Config {query, file_path})
-    }
-}
-
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(config.file_path)?;
-
-    for line in search(&config.query, &contents) {
-        println!("{line}");
-    }
-
-    Ok(())
 }
